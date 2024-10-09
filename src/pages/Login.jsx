@@ -23,7 +23,7 @@ const Login = () => {
   // variaveis pro alerta
   const [alertaClass, setAlertaClass] = useState("mb-3 d-none")
   const [alertaMensagem, setAlertaMensagem] = useState("")
-  const [alertaVariant, useAlertaVariant] = useState("danger");
+  const [alertaVariant, setAlertaVariant] = useState("danger");
 
   // lista de usuarios
   const [usuarios, setUsuarios] = useState ([])
@@ -45,6 +45,49 @@ const Login = () => {
 
   },[]);
 
+  const gravarLocalStorage = (usuario) => {
+    localStorage.setItem("userName", usuario.nome)
+    localStorage.setItem("userEmail", usuario.email)
+  }
+
+  const handleLogin = async (e)  => {
+    e.preventDefault()
+
+    const user = {email, senha}
+
+    const userToFind = usuarios.find(
+      (userFind) => userFind.email == user.email
+    )
+
+    if(email !=""){
+      if(senha !=""){
+        if(userToFind != undefined && userToFind.senha == senha){
+          setAlertaClass("mb-3")
+          gravarLocalStorage(userToFind)
+          alert("Login efetuado com Sucesso")
+          setAlertaMensagem("Login efetuado com Sucesso")
+          setAlertaVariant("success")
+        }
+        else{
+          setAlertaClass("mb-3")
+      setAlertaMensagem("Usuarios ou senha inválidos")
+        }
+        
+      }
+      else{
+        setAlertaClass("mb-3")
+      setAlertaMensagem("O campo senha não pode ser vazio")
+      }
+
+    }
+    else{
+      setAlertaClass("mb-3")
+      setAlertaMensagem("O campo email não pode ser vazio")
+    }
+
+
+  }
+
   return (
     <div>
       <Container>
@@ -52,8 +95,9 @@ const Login = () => {
       <span class="material-symbols-outlined" style={{fontSize:"100px", color: "green"}}>
        login
       </span>
+    
 
-        <form>
+        <form onSubmit={handleLogin}>
         {/* caixinha email */}
         <FloatingLabel
         controlId="floatingInputEmail"
@@ -73,7 +117,7 @@ const Login = () => {
           {alertaMensagem}
         </Alert>
 
-        <Button variant="primary">Login</Button>{' '}
+        <Button variant="primary" type='submit'>Login</Button>{' '}
 
       </form>
 
