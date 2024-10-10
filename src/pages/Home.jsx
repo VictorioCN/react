@@ -4,6 +4,8 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Table from 'react-bootstrap/Table';
 import { useState, useEffect } from 'react';
+import ModalCadastrar from '../components/ModalCadastrar';
+
 
 const url = "http://localhost:5000/usuarios"
 
@@ -12,6 +14,8 @@ const Home = () => {
 
   // lista de usuarios
   const [usuarios, setUsuarios] = useState ([])
+
+  const [modalCadastrar, setModalCadastrar] = useState(false);
 
   useEffect(() => {
     async function fetchData(){
@@ -35,6 +39,9 @@ const Home = () => {
         <Button variant="primary"
         size='lg'
         className='mb-3 d-inline-flex justify-content-center'
+        onClick={() => {
+          setModalCadastrar(true)
+        }}
         >
           <span
           className='material-symbols-outlined flex'
@@ -52,7 +59,7 @@ const Home = () => {
           <th>ID</th>
           <th>Nome</th>
           <th>Email</th>
-          <th>Senha</th>
+          <th>tipo</th>
           <th></th>
         </tr>
       </thead>
@@ -62,11 +69,22 @@ const Home = () => {
           <td>{user.id}</td>
           <td>{user.nome}</td>
           <td>{user.email}</td>
-          <td>{user.senha}</td>
+          <td>{user.tipo}</td>
           <td>
             <ButtonGroup size='sm'>
       <Button variant="info">Editar</Button>
-      <Button variant="danger">Excluir</Button>
+      <Button variant="danger"
+       onClick={ async () => {
+        const res = await fetch(`http://localhost:5000/usuarios/${user.id}`,
+        {method:"DELETE",
+          headers:{"Content-Type" : "application/json"},
+        });
+
+        const funcionarioRemovido = await res.json()
+      alert(`Usuario ${funcionarioRemovido.nome} foi excluido`)
+      }}
+      >
+        Excluir</Button>
     </ButtonGroup>
     </td>
         </tr>
@@ -74,6 +92,11 @@ const Home = () => {
       </tbody>
     </Table>
 
+    <ModalCadastrar
+    show={modalCadastrar}
+    onHide={() => {
+      setModalCadastrar(false)
+    }}/>
     </div>
   )
 }
